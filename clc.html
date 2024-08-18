@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Converter</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Custom CSS for animations -->
+  <style>
+    /* Custom CSS for animations */
+    #congrats {
+      display: none;
+      text-align: center;
+      font-size: 2rem;
+      color: #28a745;
+      margin-top: 20px;
+      opacity: 0;
+      animation: fadeIn 1s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .creator {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 1.2rem;
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">Number Converter</h1>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <form id="conversionForm">
+          <div class="form-group">
+            <label for="numberInput">Enter Number:</label>
+            <input type="text" class="form-control" id="numberInput" placeholder="Enter a number">
+          </div>
+          <div class="form-group">
+            <label for="fromBase">Convert From:</label>
+            <select class="form-control" id="fromBase">
+              <option value="2">Binary</option>
+              <option value="8">Octal</option>
+              <option value="10">Decimal</option>
+              <option value="16">Hexadecimal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="toBase">Convert To:</label>
+            <select class="form-control" id="toBase">
+              <option value="2">Binary</option>
+              <option value="8">Octal</option>
+              <option value="10">Decimal</option>
+              <option value="16">Hexadecimal</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Convert</button>
+        </form>
+        <div id="result" class="mt-4">
+          <!-- Result will be displayed here -->
+        </div>
+        <div id="steps" class="mt-4">
+          <!-- Steps and solution will be displayed here -->
+        </div>
+        <div id="congrats">🎉 Congratulations! Conversion Successful! 🎉</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="creator">Created by Sean Andrei</div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Custom JavaScript for conversion logic -->
+  <script>
+    document.getElementById('conversionForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const numberInput = document.getElementById('numberInput').value.trim().toUpperCase();
+      const fromBase = parseInt(document.getElementById('fromBase').value, 10);
+      const toBase = parseInt(document.getElementById('toBase').value, 10);
+      
+      let result;
+      let steps = "";
+      
+      try {
+        // Step 1: Calculate the decimal equivalent
+        let decimalValue = 0;
+        let digitSteps = [];
+
+        for (let i = 0; i < numberInput.length; i++) {
+          const digit = parseInt(numberInput[i], fromBase);
+          const power = numberInput.length - 1 - i;
+          const contribution = digit * Math.pow(fromBase, power);
+          decimalValue += contribution;
+          digitSteps.push(`${digit} × ${fromBase}^${power}`);
+        }
+
+        // Join the steps for converting to decimal
+        steps += `<h4>Conversion Steps:</h4>`;
+        steps += `<p>1. Convert <strong>${numberInput}</strong> from base-${fromBase} to decimal:</p>`;
+        steps += `<p>${digitSteps.join(' + ')} = <strong>${decimalValue}</strong></p>`;
+
+        // Step 2: Convert the decimal value to the target base
+        result = decimalValue.toString(toBase).toUpperCase();
+        steps += `<p>2. Convert the decimal value <strong>${decimalValue}</strong> to base-${toBase}:</p>`;
+        steps += `<p>The result is <strong>${result}</strong> in base-${toBase}.</p>`;
+      } catch (error) {
+        result = "Invalid input or conversion type";
+        steps = `<p>Error: Could not perform the conversion.</p>`;
+      }
+
+      // Display the result and steps
+      document.getElementById('result').innerHTML = `<p class="alert alert-info">Result: ${result}</p>`;
+      document.getElementById('steps').innerHTML = steps;
+      
+      // Show the congratulations message with animation
+      const congratsElement = document.getElementById('congrats');
+      congratsElement.style.display = 'block';
+      congratsElement.style.opacity = '0';
+      setTimeout(() => {
+        congratsElement.style.opacity = '1';
+      }, 100); // Slight delay to trigger animation
+    });
+  </script>
+</body>
+</html>
